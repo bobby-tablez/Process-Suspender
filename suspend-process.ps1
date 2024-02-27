@@ -1,3 +1,11 @@
+Param(
+    [Parameter(Mandatory=$false)]
+    [string]$p,
+
+    [Parameter(Mandatory=$false)]
+    [string]$t
+)
+
 Add-Type -TypeDefinition @'
     using System;
     using System.Diagnostics;
@@ -15,7 +23,6 @@ Add-Type -TypeDefinition @'
         public static extern int ResumeThread(IntPtr hThread);
 
         [DllImport("kernel32.dll", SetLastError = true)]
-        
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool CloseHandle(IntPtr hObject);
 
@@ -68,8 +75,17 @@ Add-Type -TypeDefinition @'
     }
 '@
 
-$susProcess = Read-Host "Name of process to suspend"
-$susTime = Read-Host "Amount of time in seconds to suspend process"
+If ($p) {
+   $susProcess = $p
+} Else {
+    $susProcess = Read-Host "Name of process to suspend" 
+}
+
+If ($t) {
+    $susTime = $t
+} Else {
+    $susTime = Read-Host "Amount of time in seconds to suspend process"
+}
 
 $process = Start-Process $susProcess -PassThru
 
